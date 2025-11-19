@@ -3,67 +3,103 @@ document.addEventListener('DOMContentLoaded', () => {
     const googleSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQZy6HsBu6eHeXTXzap2TeAlozXV5R3TM-Jo4Qbg1_YuBlISqVWR6IOB0WyF7zkyJU9Szx7hjXTDsry/pub?output=csv';
     // ----------------------------------------------------
 
-    const linkGrid = document.getElementById('linkGrid');
+    const tableBody = document.getElementById('links-tbody');
+    const tableHeaders = document.querySelectorAll('.links-table th');
+    let allLinksData = []; // To store the fetched data
+    let currentSort = {
+        column: null,
+        isAscending: true
+    };
 
+    // Fetches and displays the data
     function loadLinksFromSheet() {
         fetch(googleSheetURL)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
+            .then(response => response.text())
             .then(csvText => {
-                // Clear the grid to prevent duplicates on re-run
-                linkGrid.innerHTML = ''; 
-                
-                // Split the CSV text into rows and skip the header row (index 0)
                 const rows = csvText.trim().split('\n').slice(1);
-
-                rows.reverse().forEach(row => { // .reverse() to show newest entries first
-                    // Split each row by commas. Be careful of commas within fields.
+                allLinksData = rows.map(row => {
                     const values = row.split(',');
-                    
-                    if (values.length < 6) return; // Skip any empty or malformed rows
-
-                    const linkData = {
-                        // Assuming the order in your sheet is:
-                        // Timestamp, Name, Link, Category, Genre, Platform
+                    // Assuming order: Timestamp, Name, Link, Category, Genre, Platform
+                    return {
                         name: values[1],
                         link: values[2],
                         category: values[3],
                         genre: values[4],
                         platform: values[5]
                     };
-                    addLinkToDOM(linkData);
-                });
+                }).filter(data => data.name && data.link); // Filter out empty rows
+
+                // Initial render of the table, sorted by newest first
+                sortData('category', false); // Example: initial sort by category
             })
             .catch(error => {
-                console.error("Error fetching or parsing sheet data:", error);
-                linkGrid.innerHTML = `<p>Sorry, there was an error loading the links.</p>`;
+                console.error("Error fetching sheet data:", error);
+                tableBody.innerHTML = `<tr><td colspan="4">Sorry, there was an error loading the links.</td></tr>`;
             });
     }
 
-    function addLinkToDOM(linkData) {
-        let categoryColumn = document.getElementById(`category-${linkData.category}`);
-        if (!categoryColumn) {
-            categoryColumn = document.createElement('div');
-            categoryColumn.id = `category-${linkData.category}`;
-            categoryColumn.className = 'category-column';
-            categoryColumn.innerHTML = `<h2>${linkData.category}</h2><ol></ol>`;
-            linkGrid.appendChild(categoryColumn);
-        }
-        const ol = categoryColumn.querySelector('ol');
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <a href="${linkData.link}" target="_blank">${linkData.name}</a>
-            <span>${linkData.platform} | Genre: ${linkData.genre}</span>
-        `;
-        ol.appendChild(li);
+    // Sorts the data array and calls the function to redraw the table
+    function sortData(column, isAscending) {
+        allLinksData.sort((a, b) => {
+            const valA = a[column] ? a[column].toLowerCase() : '';
+            const valB = b[column] ? b[column].toLowerCase() : '';
+
+            if (valA < valB) {
+                return isAscending ? -1 : 1;
+            }
+            if (valA > valB) {
+                return isAscending ? 1 : -1;
+            }
+            return 0;
+        });
+        
+        // Update header styles
+        updateHeaderStyles(column, isAscending);
+        
+        // Redraw the table with the sorted data
+        renderTable();
+    }
+    
+    // Updates the visual indicators on the table headers
+    function updateHeaderStyles(column, isAscending) {
+        tableHeaders.forEach(header => {
+            header.classList.remove('sorted-asc', 'sorted-desc');
+            if (header.dataset.column === column) {
+                header.classList.add(isAscending ? 'sorted-asc' : 'sorted-desc');
+            }
+        });
     }
 
-    // Load the links as soon as the page is ready
+    // Clears the table and fills it with the current data
+    function renderTable() {
+        tableBody.innerHTML = ''; // Clear the existing table rows
+
+        allLinksData.forEach(linkData => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td data-label="Category">${linkData.category}</td>
+                <td data-label="Platform">${linkData.platform}</td>
+                <td data-label="Genre">${linkData.genre}</td>
+                <td data-label="Name"><a href="${linkData.link}" target="_blank">${linkData.name}</a></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+    
+    // Add click event listeners to each table header for sorting
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.dataset.column;
+            
+            // If clicking the same column, reverse the sort order. Otherwise, start with ascending.
+            const isAscending = (currentSort.column === column) ? !currentSort.isAscending : true;
+
+            currentSort = { column, isAscending };
+            sortData(column, isAscending);
+        });
+    });
+
+    // Initial load of the data
     loadLinksFromSheet();
 });
-
 
