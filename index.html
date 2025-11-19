@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Later List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Add a New Link</h1>
+        <form id="linkForm">
+            <input type="text" id="linkInput" placeholder="Paste your link here..." required>
+            <select id="categorySelect">
+                <option value="Movies">Movies</option>
+                <option value="TV-Shows">TV Shows</option>
+                <option value="Documentaries">Documentaries</option>
+                <option value="YouTube">YouTube</option>
+            </select>
+            <select id="platformSelect">
+                <option value="Netflix">Netflix</option>
+                <option value="Amazon-Prime">Amazon Prime</option>
+                <option value="Hotstar">Hotstar</option>
+                <option value="YouTube">YouTube</option>
+                <option value="Other">Other</option>
+            </select>
+            <button type="submit">Add Link</button>
+        </form>
+
+        <hr>
+
+        <h1>Your Watch Later List</h1>
+        <div id="linkGrid" class="grid-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
