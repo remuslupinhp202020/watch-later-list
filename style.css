@@ -1,43 +1,77 @@
 body {
-    font-family: sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    color: #2c3e50;
 }
 
 #linkForm {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
+#linkForm input, #linkForm select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Important for padding */
+}
+
+/* Make link input span both columns */
 #linkInput {
-    flex-grow: 1;
-    padding: 8px;
+    grid-column: 1 / -1;
+}
+
+#linkForm button {
+    grid-column: 1 / -1;
+    padding: 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#linkForm button:hover {
+    background-color: #2980b9;
 }
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
 }
 
 .category-column {
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .category-column h2 {
     margin-top: 0;
+    border-bottom: 2px solid #bdc3c7;
+    padding-bottom: 10px;
 }
 
 ol {
@@ -45,5 +79,25 @@ ol {
 }
 
 li {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+    /* This is the key change to wrap long text */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+li a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+li a:hover {
+    text-decoration: underline;
+}
+
+li span {
+    display: block;
+    font-size: 0.9em;
+    color: #7f8c8d;
 }
