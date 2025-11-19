@@ -2,39 +2,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const linkForm = document.getElementById('linkForm');
     const linkGrid = document.getElementById('linkGrid');
 
-    // Load links from local storage when the page starts
     loadLinks();
 
     linkForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // Get values from all the form fields
+        // Get values from all form fields, including platform
         const name = document.getElementById('nameInput').value;
         const link = document.getElementById('linkInput').value;
         const category = document.getElementById('categorySelect').value;
         const genre = document.getElementById('genreSelect').value;
+        const platform = document.getElementById('platformSelect').value; // Get platform value
 
-        // Simple validation to ensure dropdowns are selected
-        if (!category || !genre) {
-            alert('Please select a category and genre.');
+        // Validation now checks all dropdowns
+        if (!category || !genre || !platform) {
+            alert('Please select a category, genre, and platform.');
             return;
         }
 
         const linkData = {
-            id: Date.now(), // Unique ID for each link
+            id: Date.now(),
             name,
             link,
             category,
-            genre
+            genre,
+            platform // Add platform to the data object
         };
 
         addLinkToDOM(linkData);
         saveLinkToStorage(linkData);
-        linkForm.reset(); // Clear the form fields
+        linkForm.reset();
     });
 
     function addLinkToDOM(linkData) {
-        // Find or create the column for the link's category
         let categoryColumn = document.getElementById(`category-${linkData.category}`);
         if (!categoryColumn) {
             categoryColumn = document.createElement('div');
@@ -47,27 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const ol = categoryColumn.querySelector('ol');
         const li = document.createElement('li');
 
-        // Create a more descriptive list item
+        // Display the platform along with the genre
         li.innerHTML = `
             <a href="${linkData.link}" target="_blank">${linkData.name}</a>
-            <span>Genre: ${linkData.genre}</span>
+            <span>${linkData.platform} | Genre: ${linkData.genre}</span>
         `;
         ol.appendChild(li);
     }
 
     function saveLinkToStorage(linkData) {
-        // Get existing links from storage or create an empty array
         let links = JSON.parse(localStorage.getItem('mySavedLinks')) || [];
-        // Add the new link
         links.push(linkData);
-        // Save the updated array back to storage
         localStorage.setItem('mySavedLinks', JSON.stringify(links));
     }
 
     function loadLinks() {
-        // Get all links from storage
         let links = JSON.parse(localStorage.getItem('mySavedLinks')) || [];
-        // Add each link to the display
         links.forEach(link => {
             addLinkToDOM(link);
         });
