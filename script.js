@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- PASTE YOUR PUBLISHED GOOGLE SHEET CSV URL HERE ---
-    const googleSheetURL = 'https://docs.google.com/spreadsheets/d/e/YOUR_LONG_URL_STRING/pub?output=csv';
+    const googleSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQZy6HsBu6eHeXTXzap2TeAlozXV5R3TM-Jo4Qbg1_YuBlISqVWR6IOB0WyF7zkyJU9Szx7hjXTDsry/pub?gid=207549302&single=true&output=csv';
     // ----------------------------------------------------
 
     const linkGrid = document.getElementById('linkGrid');
@@ -65,3 +65,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load the links as soon as the page is ready
     loadLinksFromSheet();
 });
+
