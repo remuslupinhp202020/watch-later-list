@@ -1,37 +1,95 @@
-/* (All your existing CSS is above this) */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50;
+}
 
 .add-link-button {
     display: inline-block;
     background-color: #3498db;
     color: white;
     padding: 12px 20px;
-    margin-bottom: 20px; /* Adds space before the horizontal line */
+    margin-bottom: 20px;
     border-radius: 5px;
-    text-decoration: none; /* Removes the default link underline */
+    text-decoration: none;
     font-weight: bold;
     text-align: center;
     transition: background-color 0.3s ease;
 }
 
 .add-link-button:hover {
-    background-color: #2980b9; /* A darker blue on hover */
-}```
+    background-color: #2980b9;
+}
 
-**What we did:**
-*   Created a new style rule for the `.add-link-button` class we added in the HTML.
-*   Gave it a background color, padding, and rounded corners to make it look like a button.
-*   Removed the default link underline with `text-decoration: none;`.
-*   Added a simple hover effect for better user experience.
+/* === NEW TABLE STYLES === */
+.table-container {
+    overflow-x: auto; /* Ensures table is scrollable on small screens if needed */
+}
 
----
+.links-table {
+    width: 100%;
+    border-collapse: collapse; /* Removes space between cell borders */
+    margin-top: 20px;
+}
 
-### **3. `script.js` (No Changes Needed)**
+.links-table th, .links-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
 
-Your JavaScript file `script.js` remains exactly the same, as its only job is to fetch and display the data.
+/* Table Header Styles */
+.links-table thead th {
+    background-color: #ecf0f1;
+    color: #2c3e50;
+    font-weight: bold;
+    cursor: pointer; /* Indicates the headers are clickable */
+    user-select: none; /* Prevents text selection when clicking */
+    position: relative;
+}
 
-### **Next Steps**
+/* Add a small arrow icon to the sorted column */
+.links-table thead th.sorted-asc::after {
+    content: ' ▲';
+    font-size: 0.8em;
+}
 
-1.  Replace the placeholder URL in your `index.html` file.
-2.  Add the new CSS rules to your `style.css` file.
-3.  Upload the two updated files to your GitHub repository.
-4.  Netlify will automatically deploy the changes, and your new button will be live
+.links-table thead th.sorted-desc::after {
+    content: ' ▼';
+    font-size: 0.8em;
+}
+
+
+/* Alternating Row Colors for readability */
+.links-table tbody tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+.links-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.links-table td a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.links-table td a:hover {
+    text-decoration: underline;
+}
