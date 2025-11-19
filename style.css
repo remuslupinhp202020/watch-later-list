@@ -1,67 +1,37 @@
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f7f6;
-    color: #333;
-}
+/* (All your existing CSS is above this) */
 
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-h1, h2 {
-    color: #2c3e50;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.category-column {
-    background-color: #ecf0f1;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-
-.category-column h2 {
-    margin-top: 0;
-    border-bottom: 2px solid #bdc3c7;
-    padding-bottom: 10px;
-}
-
-ol {
-    padding-left: 20px;
-}
-
-li {
-    margin-bottom: 15px;
-    line-height: 1.5;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-
-li a {
-    color: #2980b9;
-    text-decoration: none;
+.add-link-button {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 12px 20px;
+    margin-bottom: 20px; /* Adds space before the horizontal line */
+    border-radius: 5px;
+    text-decoration: none; /* Removes the default link underline */
     font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
 }
 
-li a:hover {
-    text-decoration: underline;
-}
+.add-link-button:hover {
+    background-color: #2980b9; /* A darker blue on hover */
+}```
 
-li span {
-    display: block;
-    font-size: 0.9em;
-    color: #7f8c8d;
-    margin-top: 4px;
-}
+**What we did:**
+*   Created a new style rule for the `.add-link-button` class we added in the HTML.
+*   Gave it a background color, padding, and rounded corners to make it look like a button.
+*   Removed the default link underline with `text-decoration: none;`.
+*   Added a simple hover effect for better user experience.
+
+---
+
+### **3. `script.js` (No Changes Needed)**
+
+Your JavaScript file `script.js` remains exactly the same, as its only job is to fetch and display the data.
+
+### **Next Steps**
+
+1.  Replace the placeholder URL in your `index.html` file.
+2.  Add the new CSS rules to your `style.css` file.
+3.  Upload the two updated files to your GitHub repository.
+4.  Netlify will automatically deploy the changes, and your new button will be live
