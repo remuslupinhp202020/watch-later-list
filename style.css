@@ -21,7 +21,8 @@ h1, h2 {
 
 #linkForm {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* This creates 3 columns for the dropdowns */
+    grid-template-columns: repeat(3, 1fr); 
     gap: 15px;
     margin-bottom: 25px;
 }
@@ -31,16 +32,16 @@ h1, h2 {
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box; /* Important for padding */
+    box-sizing: border-box; 
+    font-size: 1em;
 }
 
-/* Make link input span both columns */
-#linkInput {
+/* Make Name, Link, and Button span the full width */
+#nameInput, #linkInput, #linkForm button {
     grid-column: 1 / -1;
 }
 
 #linkForm button {
-    grid-column: 1 / -1;
     padding: 12px;
     background-color: #3498db;
     color: white;
@@ -81,7 +82,6 @@ ol {
 li {
     margin-bottom: 15px;
     line-height: 1.5;
-    /* This is the key change to wrap long text */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -100,4 +100,5 @@ li span {
     display: block;
     font-size: 0.9em;
     color: #7f8c8d;
+    margin-top: 4px;
 }
