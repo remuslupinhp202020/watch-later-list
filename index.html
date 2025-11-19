@@ -8,59 +8,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>Add a New Link</h1>
-        <form id="linkForm">
-            <!-- New "Name" field -->
-            <input type="text" id="nameInput" placeholder="Name or Title" required>
-
-            <input type="url" id="linkInput" placeholder="Paste your link here..." required>
-
-            <!-- Updated "Category" dropdown -->
-            <select id="categorySelect">
-                <option value="" disabled selected>Select Category</option>
-                <option value="Movie">Movie</option>
-                <option value="TV Show">TV Show</option>
-                <option value="Music">Music</option>
-                <option value="Recipe">Recipe</option>
-                <option value="Education">Education</option>
-            </select>
-
-            <!-- New "Genre" dropdown -->
-            <select id="genreSelect">
-                <option value="" disabled selected>Select Genre</option>
-                <option value="Anime">Anime</option>
-                <option value="Action">Action</option>
-                <option value="Comedy">Comedy</option>
-                <option value="Drama">Drama</option>
-                <option value="Detective">Detective</option>
-                <option value="Fantasy">Fantasy</option>
-                <option value="Sci-Fi">Sci-Fi</option>
-                <option value="Tutorial">Tutorial</option>
-                <option value="Other">Other</option>
-            </select>
-            <!-- Re-added Platform field -->
-            <select id="platformSelect" required>
-                <option value="" disabled selected>Select Platform</option>
-                <option value="Netflix">Netflix</option>
-                <option value="YouTube">YouTube</option>
-                <option value="Amazon Prime">Amazon Prime</option>
-                <option value="Hotstar">Hotstar</option>
-                <option value="Soundcloud">Soundcloud</option>
-                <option value="MX Player">MX Player</option>
-                <option value="Other">Other</option>
-            </select>
-            <button type="submit">Add Link</button>
-        </form>
-
-        <hr>
-
         <h1>Your Saved Links</h1>
+        <p>To add a new link, please use your bookmarked Google Form.</p>
+        <hr>
         <div id="linkGrid" class="grid-container"></div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
-
-
