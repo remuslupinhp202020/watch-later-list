@@ -19,43 +19,6 @@ h1, h2 {
     color: #2c3e50;
 }
 
-#linkForm {
-    display: grid;
-    /* This creates 3 columns for the dropdowns */
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-#linkForm input, #linkForm select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box; 
-    font-size: 1em;
-}
-
-/* Make Name, Link, and Button span the full width */
-#nameInput, #linkInput, #linkForm button {
-    grid-column: 1 / -1;
-}
-
-#linkForm button {
-    padding: 12px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
-
-#linkForm button:hover {
-    background-color: #2980b9;
-}
-
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
