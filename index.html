@@ -3,42 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Later List</title>
+    <title>My Link Hub</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Add a New Link</h1>
         <form id="linkForm">
-            <input type="text" id="linkInput" placeholder="Paste your link here..." required>
+            <!-- New "Name" field -->
+            <input type="text" id="nameInput" placeholder="Name or Title" required>
+
+            <input type="url" id="linkInput" placeholder="Paste your link here..." required>
+
+            <!-- Updated "Category" dropdown -->
             <select id="categorySelect">
-                <option value="Movies">Movies</option>
-                <option value="TV-Shows">TV Shows</option>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Movie">Movie</option>
+                <option value="TV Show">TV Show</option>
                 <option value="Music">Music</option>
-                <option value="Anime">Anime</option>
-                <option value="Romantic">Romantic</option>
-                <option value="Detective">Detective</option> 
-                <option value="Recipe">Recipe</option>     
+                <option value="Recipe">Recipe</option>
+                <option value="Education">Education</option>
             </select>
-            <select id="platformSelect">
-                <option value="Netflix">Netflix</option>
-                <option value="Amazon-Prime">Amazon Prime</option>
-                <option value="Hotstar">Hotstar</option>
-                <option value="YouTube">YouTube</option>
-                <option value="YouTube">MX Player</option>
+
+            <!-- New "Genre" dropdown -->
+            <select id="genreSelect">
+                <option value="" disabled selected>Select Genre</option>
+                <option value="Anime">Anime</option>
+                <option value="Action">Action</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Drama">Drama</option>
+                <option value="Detective">Detective</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+                <option value="Tutorial">Tutorial</option>
                 <option value="Other">Other</option>
             </select>
+            
             <button type="submit">Add Link</button>
         </form>
 
         <hr>
 
-        <h1>Your Watch Later List</h1>
+        <h1>Your Saved Links</h1>
         <div id="linkGrid" class="grid-container"></div>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
-
