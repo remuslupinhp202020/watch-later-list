@@ -9,18 +9,29 @@
 <body>
     <div class="container">
         <h1>Your Saved Links</h1>
-
-        <!-- === ADD THIS BUTTON === -->
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSc31l9QJ369ZnFSxO_Nhh1IC6C39OmLk_K7cyp_YyFtsJMfmg/viewform" class="add-link-button" target="_blank" rel="noopener noreferrer">
             Add a New Link
         </a>
-        <!-- ======================= -->
-
         <hr>
-        <div id="linkGrid" class="grid-container"></div>
+
+        <!-- New Table Structure -->
+        <div class="table-container">
+            <table class="links-table">
+                <thead>
+                    <tr>
+                        <th data-column="category">Category</th>
+                        <th data-column="platform">Platform</th>
+                        <th data-column="genre">Genre</th>
+                        <th data-column="name">Name (Link)</th>
+                    </tr>
+                </thead>
+                <tbody id="links-tbody">
+                    <!-- Links will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
