@@ -31,7 +31,7 @@ body {
     width: 100%;
     height: 100%;
     background: radial-gradient(circle at 50% -20%, #312e81 0%, transparent 50%),
-                radial-gradient(circle at 10% 20%, #1e1b4b 0%, transparent 40%);
+        radial-gradient(circle at 10% 20%, #1e1b4b 0%, transparent 40%);
     z-index: -1;
 }
 
@@ -190,6 +190,22 @@ select:focus {
     gap: 15px;
 }
 
+.link-brand {
+    font-size: 4rem;
+    font-weight: 900;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin-bottom: 5px;
+}
+
+.platform-label {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
 .link-icon {
     font-size: 3rem;
 }
@@ -298,8 +314,13 @@ select:focus {
 }
 
 @keyframes rotation {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .no-results {
@@ -326,11 +347,11 @@ select:focus {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .controls {
         grid-template-columns: 1fr;
     }
-    
+
     .filter-wrapper {
         flex-direction: column;
     }
