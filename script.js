@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             return result;
         } catch (e) {
-            console.error("CSV Parsing Error:", e);
             return [];
         }
     }
@@ -49,22 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
-    function getPlatformBranding(url, platformName) {
-        const p = (platformName || '').toLowerCase();
-        const u = (url || '').toLowerCase();
-        if (p.includes('netflix') || u.includes('netflix')) return { color: '#e50914', icon: 'N', name: 'Netflix' };
-        if (p.includes('instagram') || u.includes('instagram')) return { color: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', icon: '📸', name: 'Instagram' };
-        if (p.includes('amazon') || p.includes('prime') || u.includes('primevideo')) return { color: '#00a8e1', icon: 'P', name: 'Prime Video' };
-        if (p.includes('hotstar') || u.includes('hotstar')) return { color: '#001524', icon: 'H', name: 'Hotstar' };
-        if (p.includes('youtube') || u.includes('youtube') || u.includes('youtu.be')) return { color: '#ff0000', icon: 'Y', name: 'YouTube' };
-        return { color: '#334155', icon: '🔗', name: platformName || 'Link' };
-    }
-
     function renderGrid(data) {
         horizontalGrid.innerHTML = '';
         verticalGrid.innerHTML = '';
-        let hCount = 0; let vCount = 0;
-
+        
         data.forEach(item => {
             const isVertical = item.link.includes('shorts') || item.link.includes('reel') || item.link.includes('instagram.com');
             const targetGrid = isVertical ? verticalGrid : horizontalGrid;
@@ -73,16 +60,16 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = isVertical ? 'link-card vertical' : 'link-card horizontal';
             
             const embedURL = getEmbedURL(item.link);
-            const branding = getPlatformBranding(item.link, item.platform);
             const customThumb = item.thumbnail && item.thumbnail.startsWith('http') ? item.thumbnail : null;
 
             let mediaHTML = '';
             if (embedURL) {
-                mediaHTML = `<div class="media-container"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                // Wrap iframe for better cropping control
+                mediaHTML = `<div class="media-container"><div class="iframe-wrapper"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>`;
             } else if (customThumb) {
                 mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${customThumb}')"></div>`;
             } else {
-                mediaHTML = `<div class="media-container link-preview" style="background: ${branding.color}"><div class="link-brand">${branding.icon}</div><div class="platform-label">${branding.name}</div></div>`;
+                mediaHTML = `<div class="media-container link-preview"><div class="link-brand">🔗</div></div>`;
             }
 
             card.innerHTML = `
@@ -100,40 +87,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Logic to stop other videos when clicking one
-            card.addEventListener('mousedown', () => {
+            // SMART STOP LOGIC: Only stops others when you click a NEW one
+            card.addEventListener('click', (e) => {
+                // If clicking the Visit Source link, don't reset
+                if (e.target.closest('.visit-link')) return;
+
+                const currentIframe = card.querySelector('iframe');
+                if (!currentIframe) return;
+
                 const allIframes = document.querySelectorAll('iframe');
                 allIframes.forEach(ifrm => {
-                    if (ifrm !== card.querySelector('iframe')) {
-                        const currentSrc = ifrm.src;
-                        ifrm.src = ''; // Kill the stream
-                        ifrm.src = currentSrc; // Reset the preview
+                    if (ifrm !== currentIframe) {
+                        const src = ifrm.src;
+                        ifrm.src = '';
+                        ifrm.src = src;
                     }
                 });
             });
 
             targetGrid.appendChild(card);
-            if (isVertical) vCount++; else hCount++;
-        });
-
-        if (hCount === 0) horizontalGrid.innerHTML = '<div class="no-results">No videos found.</div>';
-        if (vCount === 0) verticalGrid.innerHTML = '<div class="no-results">No reels found.</div>';
-    }
-
-    function populateFilters(data) {
-        categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-        platformFilter.innerHTML = '<option value="all">All Platforms</option>';
-        const categories = [...new Set(data.map(item => item.category).filter(Boolean))].sort();
-        const platforms = [...new Set(data.map(item => item.platform).filter(Boolean))].sort();
-        categories.forEach(cat => {
-            const opt = document.createElement('option');
-            opt.value = cat; opt.textContent = cat;
-            categoryFilter.appendChild(opt);
-        });
-        platforms.forEach(plat => {
-            const opt = document.createElement('option');
-            opt.value = plat; opt.textContent = plat;
-            platformFilter.appendChild(opt);
         });
     }
 
@@ -150,25 +122,15 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGrid(filtered);
     }
 
-    const sampleData = [
-        { name: "Rabbi Shergill - Bulla (YouTube)", link: "https://www.youtube.com/watch?v=z5X6fczz54Q", category: "Music 🎵", genre: "Sufi 👳", platform: "YouTube" },
-        { name: "Violin Reel (Instagram Embed)", link: "https://www.instagram.com/reel/DRCXQCCCUJ0/", category: "Music 🎵", genre: "Bollywood🎥", platform: "Instagram" },
-        { name: "Only Murders in the Building (Prime)", link: "https://app.primevideo.com/detail?gti=amzn1.dv.gti.191c9f37-5af2-4267-a08f-8974a7c465f7", category: "TV Show 📺", genre: "Detective 🕵️‍♀️", platform: "Amazon Prime", thumbnail: "https://m.media-amazon.com/images/M/MV5BMGRjYjM3MjYtM2ZlMi00YmNmLWE4MzItYzI1YTNkNDM0YWI3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-        { name: "Chipotle Recipe (YouTube Shorts)", link: "https://youtube.com/shorts/6xBEbs83QQg", category: "Recipe 🍕", genre: "Food 🍔", platform: "YouTube" }
-    ];
-
     function loadLinksFromSheet() {
         fetch(googleSheetURL)
             .then(res => res.ok ? res.text() : Promise.reject('Network error'))
             .then(text => {
                 allLinksData = parseCSV(text);
-                populateFilters(allLinksData);
                 renderGrid(allLinksData);
             })
-            .catch(err => {
-                allLinksData = sampleData;
-                populateFilters(allLinksData);
-                renderGrid(allLinksData);
+            .catch(() => {
+                renderGrid([]);
             });
     }
 
