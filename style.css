@@ -198,12 +198,13 @@ select:focus {
 
 /* DEEP ZOOM for Instagram - ZERO CLUTTER */
 .link-card.vertical iframe[src*="instagram.com"] {
-    width: 180%;
-    height: 180%;
+    width: 160%;
+    height: 250%; /* Over-expand height to bury the footer */
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -54%) scale(1.1); /* Zoomed and centered to kill all UI */
+    top: -140px; /* Hide the header */
+    left: -30%; /* Center the video horizontally */
+    transform: none;
+    border: none;
 }
 
 /* Smart fix for Shorts to ensure they fit */
