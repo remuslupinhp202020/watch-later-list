@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const categoryFilter = document.getElementById('category-filter');
     const platformFilter = document.getElementById('platform-filter');
+    const sortFilter = document.getElementById('sort-filter');
 
     let allLinksData = [];
     let lastActiveIframe = null; // Track only the currently playing video
@@ -126,12 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const catValue = categoryFilter.value;
         const platValue = platformFilter.value;
-        const filtered = allLinksData.filter(item => {
+        const sortValue = sortFilter.value;
+        
+        let filtered = allLinksData.filter(item => {
             const matchesSearch = item.name.toLowerCase().includes(searchTerm) || item.category.toLowerCase().includes(searchTerm);
             const matchesCat = catValue === 'all' || item.category === catValue;
             const matchesPlat = platValue === 'all' || item.platform === platValue;
             return matchesSearch && matchesCat && matchesPlat;
         });
+
+        if (sortValue === 'platform') {
+            filtered.sort((a, b) => a.platform.localeCompare(b.platform));
+        } else if (sortValue === 'name') {
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+        }
+
         renderGrid(filtered);
     }
 
@@ -168,5 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
     searchInput.addEventListener('input', filterData);
     categoryFilter.addEventListener('change', filterData);
     platformFilter.addEventListener('change', filterData);
+    sortFilter.addEventListener('change', filterData);
     loadLinksFromSheet();
 });
