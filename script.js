@@ -17,17 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
         
         for (let i = 1; i < lines.length; i++) {
             const obj = {};
-            // regex to split by comma except inside double quotes
             const currentline = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
             if (currentline.length < 6) continue;
 
-            // Mapping based on: Timestamp, Name, Link, Category, Genre, Platform
+            // Mapping based on: Timestamp, Name, Link, Category, Genre, Platform, ... Thumbnail (optional 10th col)
             obj.name = currentline[1]?.replace(/^"|"$/g, '').trim() || '';
             obj.link = currentline[2]?.replace(/^"|"$/g, '').trim() || '';
             obj.category = currentline[3]?.replace(/^"|"$/g, '').trim() || '';
             obj.genre = currentline[4]?.replace(/^"|"$/g, '').trim() || '';
             obj.platform = currentline[5]?.replace(/^"|"$/g, '').trim() || '';
+            // Look for a thumbnail URL in any extra columns (9th or 10th column usually)
+            obj.thumbnail = currentline[9]?.replace(/^"|"$/g, '').trim() || 
+                            currentline[8]?.replace(/^"|"$/g, '').trim() || '';
             
             if (obj.name && obj.link) {
                 result.push(obj);
@@ -36,13 +38,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 
+    // Helper to extract YouTube Thumbnail
+    function getYouTubeThumbnail(url) {
+        const ytMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/);
+        return ytMatch ? `https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg` : null;
+    }
+
     // Helper to extract embed URLs for common video platforms
     function getEmbedURL(url) {
         if (!url) return null;
         
-        // YouTube
+        // YouTube (only for standard videos, not shorts which often look better as cards)
         const ytMatch = url.match(/(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+        if (ytMatch && !url.includes('shorts')) return `https://www.youtube.com/embed/${ytMatch[1]}`;
 
         // Vimeo
         const vimeoMatch = url.match(/(?:https?:\/\/)?(?:www\.)?vimeo\.com\/(\d+)/);
@@ -80,16 +88,23 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const embedURL = getEmbedURL(item.link);
             const branding = getPlatformBranding(item.link, item.platform);
+            const ytThumb = getYouTubeThumbnail(item.link);
+            const customThumb = item.thumbnail && item.thumbnail.startsWith('http') ? item.thumbnail : null;
             
             let mediaHTML = '';
-            if (embedURL) {
+            
+            // Priority: Custom Thumbnail > Embed Player > YouTube Auto-Thumb > Branded Placeholder
+            if (customThumb) {
+                mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${customThumb}')"></div>`;
+            } else if (embedURL) {
                 mediaHTML = `<div class="media-container"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+            } else if (ytThumb) {
+                mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${ytThumb}')"></div>`;
             } else {
                 mediaHTML = `
                     <div class="media-container link-preview" style="background: ${branding.color}">
                         <div class="link-brand">${branding.icon}</div>
                         <div class="platform-label">${branding.name}</div>
-                        <a href="${item.link}" target="_blank" class="preview-btn">Open on ${branding.name}</a>
                     </div>`;
             }
 
