@@ -1,16 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     const googleSheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQZy6HsBu6eHeXTXzap2TeAlozXV5R3TM-Jo4Qbg1_YuBlISqVWR6IOB0WyF7zkyJU9Szx7hjXTDsry/pub?output=csv';
 
-    const linksGrid = document.getElementById('links-grid');
+    const horizontalGrid = document.getElementById('horizontal-grid');
+    const verticalGrid = document.getElementById('vertical-grid');
     const searchInput = document.getElementById('search-input');
     const categoryFilter = document.getElementById('category-filter');
     const platformFilter = document.getElementById('platform-filter');
 
     let allLinksData = [];
 
-    // Robust CSV Parser
     function parseCSV(text) {
-        console.log("Parsing CSV data...");
         try {
             const lines = text.trim().split('\n');
             const result = [];
@@ -29,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (obj.link) result.push(obj);
             }
-            console.log(`Parsed ${result.length} items.`);
             return result;
         } catch (e) {
             console.error("CSV Parsing Error:", e);
@@ -45,19 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getEmbedURL(url) {
         if (!url) return null;
-        
-        // YouTube (Standard and Shorts)
         const ytMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
         if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
-
-        // Instagram Reels / Posts
         const instaMatch = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
         if (instaMatch) return `https://www.instagram.com/p/${instaMatch[1]}/embed`;
-
-        // Vimeo
         const vimeoMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?vimeo\.com\/(\d+)/);
         if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
-
         return null;
     }
 
@@ -73,16 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGrid(data) {
-        console.log("Rendering grid...");
-        linksGrid.innerHTML = '';
-        if (!data || data.length === 0) {
-            linksGrid.innerHTML = '<div class="no-results">No items found matching your criteria.</div>';
-            return;
-        }
+        horizontalGrid.innerHTML = '';
+        verticalGrid.innerHTML = '';
+        
+        let hCount = 0;
+        let vCount = 0;
 
         data.forEach(item => {
+            const isVertical = item.link.includes('shorts') || item.link.includes('reel') || item.link.includes('instagram.com');
+            const targetGrid = isVertical ? verticalGrid : horizontalGrid;
+            
             const card = document.createElement('div');
-            card.className = 'link-card';
+            card.className = isVertical ? 'link-card vertical' : 'link-card horizontal';
+            
             const embedURL = getEmbedURL(item.link);
             const branding = getPlatformBranding(item.link, item.platform);
             const ytThumb = getYouTubeThumbnail(item.link);
@@ -109,17 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 class="card-title">${item.name}</h3>
                     <p class="card-genre">${item.genre}</p>
                     <div class="card-footer">
-                        <a href="${item.link}" target="_blank" class="visit-link">Visit Source <svg viewBox="0 0 24 24" width="16" height="16"><path d="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" fill="currentColor"/></svg></a>
+                        <a href="${item.link}" target="_blank" class="visit-link">Visit Source</a>
                     </div>
                 </div>
             `;
-            linksGrid.appendChild(card);
+            targetGrid.appendChild(card);
+            if (isVertical) vCount++; else hCount++;
         });
-        console.log("Grid rendered.");
+
+        if (hCount === 0) horizontalGrid.innerHTML = '<div class="no-results">No horizontal videos found.</div>';
+        if (vCount === 0) verticalGrid.innerHTML = '<div class="no-results">No reels found.</div>';
     }
 
     function populateFilters(data) {
-        console.log("Populating filters...");
         categoryFilter.innerHTML = '<option value="all">All Categories</option>';
         platformFilter.innerHTML = '<option value="all">All Platforms</option>';
         const categories = [...new Set(data.map(item => item.category).filter(Boolean))].sort();
@@ -157,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     function loadLinksFromSheet() {
-        console.log("Fetching data...");
         fetch(googleSheetURL)
             .then(res => res.ok ? res.text() : Promise.reject('Network error'))
             .then(text => {
@@ -166,14 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderGrid(allLinksData);
             })
             .catch(err => {
-                console.warn("Using sample data due to:", err);
                 allLinksData = sampleData;
                 populateFilters(allLinksData);
                 renderGrid(allLinksData);
-                const notice = document.createElement('div');
-                notice.style.cssText = 'grid-column: 1/-1; text-align: center; padding: 10px; background: rgba(255,165,0,0.1); color: #fbbf24; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; border: 1px solid rgba(255,165,0,0.2);';
-                notice.innerHTML = '⚠️ <b>Preview Mode:</b> Local disk access blocks live data. Deploy to Netlify to see your live Google Sheet.';
-                linksGrid.prepend(notice);
             });
     }
 
