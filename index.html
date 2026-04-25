@@ -3,36 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Later</title>
+    <title>Watch Later Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="background-glow"></div>
+    
     <div class="container">
-        <h1>My Cross-Platform Watchlist</h1>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc31l9QJ369ZnFSxO_Nhh1IC6C39OmLk_K7cyp_YyFtsJMfmg/viewform" class="add-link-button" target="_blank" rel="noopener noreferrer">
-            Add a New Link
-        </a>
-        <hr>
+        <header>
+            <div class="header-content">
+                <h1>My Watchlist</h1>
+                <p class="subtitle">Curated videos and resources from across the web</p>
+            </div>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc31l9QJ369ZnFSxO_Nhh1IC6C39OmLk_K7cyp_YyFtsJMfmg/viewform" class="add-link-button" target="_blank" rel="noopener noreferrer">
+                <span>+</span> Add Content
+            </a>
+        </header>
 
-        <!-- New Table Structure -->
-        <div class="table-container">
-            <table class="links-table">
-                <thead>
-                    <tr>
-                        <th data-column="category">Category</th>
-                        <th data-column="platform">Platform</th>
-                        <th data-column="genre">Genre</th>
-                        <th data-column="name">Name (Link)</th>
-                    </tr>
-                </thead>
-                <tbody id="links-tbody">
-                    <!-- Links will be inserted here by JavaScript -->
-                </tbody>
-            </table>
+        <section class="controls">
+            <div class="search-wrapper">
+                <input type="text" id="search-input" placeholder="Search by name, category, or platform...">
+                <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" fill="currentColor"/></svg>
+            </div>
+            <div class="filter-wrapper">
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                </select>
+                <select id="platform-filter">
+                    <option value="all">All Platforms</option>
+                </select>
+            </div>
+        </section>
+
+        <div id="links-grid" class="links-grid">
+            <!-- Cards will be inserted here by JavaScript -->
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+                <p>Loading your watchlist...</p>
+            </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
