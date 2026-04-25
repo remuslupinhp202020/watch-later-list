@@ -99,29 +99,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Seamlessly pause the PREVIOUS video when a NEW one is clicked
-    window.addEventListener('blur', () => {
-        setTimeout(() => {
-            const active = document.activeElement;
-            if (active && active.tagName === 'IFRAME') {
-                if (lastActiveIframe && lastActiveIframe !== active) {
-                    const src = lastActiveIframe.src || '';
-                    if (src.includes('youtube.com')) {
-                        // Pause YT cleanly without reloading
-                        lastActiveIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-                    } else if (src.includes('vimeo.com')) {
-                        // Pause Vimeo cleanly
-                        lastActiveIframe.contentWindow.postMessage('{"method":"pause"}', '*');
-                    } else if (src.includes('instagram.com')) {
-                        // Instagram has no pause API, so we only reload this ONE previous video
-                        const currentSrc = lastActiveIframe.src;
-                        lastActiveIframe.src = '';
-                        lastActiveIframe.src = currentSrc;
-                    }
+    // Using an interval because moving focus from one iframe to another directly doesn't re-trigger 'blur'
+    setInterval(() => {
+        const active = document.activeElement;
+        if (active && active.tagName === 'IFRAME') {
+            if (lastActiveIframe && lastActiveIframe !== active) {
+                const src = lastActiveIframe.src || '';
+                if (src.includes('youtube.com')) {
+                    // Pause YT cleanly
+                    lastActiveIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                } else if (src.includes('vimeo.com')) {
+                    // Pause Vimeo cleanly
+                    lastActiveIframe.contentWindow.postMessage('{"method":"pause"}', '*');
+                } else if (src.includes('instagram.com')) {
+                    // Instagram has no pause API, so we reload this ONE previous video
+                    const currentSrc = lastActiveIframe.src;
+                    lastActiveIframe.src = '';
+                    lastActiveIframe.src = currentSrc;
                 }
-                lastActiveIframe = active; // Update the currently playing video
             }
-        }, 100);
-    });
+            lastActiveIframe = active; // Update the currently playing video
+        }
+    }, 500);
 
     function filterData() {
         const searchTerm = searchInput.value.toLowerCase();
