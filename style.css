@@ -174,11 +174,26 @@ select:focus {
     aspect-ratio: 16/9;
     background: #000;
     position: relative;
+    overflow: hidden;
 }
 
 .media-container iframe {
     width: 100%;
     height: 100%;
+    border: none;
+    display: block;
+}
+
+/* Smart Crop for Instagram and Vertical Videos */
+.link-card:has(iframe[src*="instagram.com"]),
+.link-card:has(iframe[src*="shorts"]) {
+    --crop-offset: -50px;
+}
+
+.link-card iframe[src*="instagram.com"] {
+    height: calc(100% + 120px); /* Expand height to hide footer */
+    margin-top: -60px; /* Shift up to hide header */
+    width: 100%;
 }
 
 .thumbnail-view {
