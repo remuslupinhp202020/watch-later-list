@@ -51,6 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    // Helper to get platform-specific branding
+    function getPlatformBranding(url, platformName) {
+        const p = platformName.toLowerCase();
+        const u = url.toLowerCase();
+        
+        if (p.includes('netflix') || u.includes('netflix')) return { color: '#e50914', icon: 'N', name: 'Netflix' };
+        if (p.includes('instagram') || u.includes('instagram')) return { color: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', icon: '📸', name: 'Instagram' };
+        if (p.includes('amazon') || p.includes('prime') || u.includes('primevideo')) return { color: '#00a8e1', icon: 'P', name: 'Prime Video' };
+        if (p.includes('hotstar') || u.includes('hotstar')) return { color: '#001524', icon: 'H', name: 'Hotstar' };
+        if (p.includes('youtube') || u.includes('youtube') || u.includes('youtu.be')) return { color: '#ff0000', icon: 'Y', name: 'YouTube' };
+        
+        return { color: '#334155', icon: '🔗', name: platformName || 'Link' };
+    }
+
     // Render the grid of cards
     function renderGrid(data) {
         linksGrid.innerHTML = '';
@@ -65,12 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'link-card';
             
             const embedURL = getEmbedURL(item.link);
-            const mediaHTML = embedURL 
-                ? `<div class="media-container"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`
-                : `<div class="media-container link-preview">
-                    <div class="link-icon">🔗</div>
-                    <a href="${item.link}" target="_blank" class="preview-btn">View Resource</a>
-                   </div>`;
+            const branding = getPlatformBranding(item.link, item.platform);
+            
+            let mediaHTML = '';
+            if (embedURL) {
+                mediaHTML = `<div class="media-container"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+            } else {
+                mediaHTML = `
+                    <div class="media-container link-preview" style="background: ${branding.color}">
+                        <div class="link-brand">${branding.icon}</div>
+                        <div class="platform-label">${branding.name}</div>
+                        <a href="${item.link}" target="_blank" class="preview-btn">Open on ${branding.name}</a>
+                    </div>`;
+            }
 
             card.innerHTML = `
                 ${mediaHTML}
