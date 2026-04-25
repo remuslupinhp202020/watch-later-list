@@ -207,17 +207,6 @@ select:focus {
     border: none;
 }
 
-.click-interceptor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 5;
-    background: transparent;
-    cursor: pointer;
-}
-
 /* Smart fix for Shorts to ensure they fit */
 .link-card.vertical iframe[src*="youtube.com/embed/"] {
     width: 100%;
