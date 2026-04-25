@@ -64,8 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let mediaHTML = '';
             if (embedURL) {
-                // Wrap iframe for better cropping control
-                mediaHTML = `<div class="media-container"><div class="iframe-wrapper"><iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>`;
+                mediaHTML = `
+                    <div class="media-container">
+                        <div class="click-interceptor"></div>
+                        <div class="iframe-wrapper">
+                            <iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>`;
             } else if (customThumb) {
                 mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${customThumb}')"></div>`;
             } else {
@@ -87,23 +92,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // SMART STOP LOGIC: Only stops others when you click a NEW one
-            card.addEventListener('click', (e) => {
-                // If clicking the Visit Source link, don't reset
-                if (e.target.closest('.visit-link')) return;
-
-                const currentIframe = card.querySelector('iframe');
-                if (!currentIframe) return;
-
-                const allIframes = document.querySelectorAll('iframe');
-                allIframes.forEach(ifrm => {
-                    if (ifrm !== currentIframe) {
+            // Smart Stop Logic with Interceptor
+            const interceptor = card.querySelector('.click-interceptor');
+            if (interceptor) {
+                interceptor.addEventListener('click', () => {
+                    const allIframes = document.querySelectorAll('iframe');
+                    allIframes.forEach(ifrm => {
                         const src = ifrm.src;
                         ifrm.src = '';
                         ifrm.src = src;
-                    }
+                    });
+                    
+                    // Show all interceptors, then hide this one to allow player interaction
+                    document.querySelectorAll('.click-interceptor').forEach(ci => ci.style.display = 'block');
+                    interceptor.style.display = 'none';
                 });
-            });
+            }
 
             targetGrid.appendChild(card);
         });
