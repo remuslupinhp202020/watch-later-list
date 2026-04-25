@@ -44,11 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getEmbedURL(url) {
-        if (!url || url.includes('shorts') || url.includes('instagram.com')) return null;
-        const ytMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        if (!url) return null;
+        
+        // YouTube (Standard and Shorts)
+        const ytMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
         if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+
+        // Instagram Reels / Posts
+        const instaMatch = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
+        if (instaMatch) return `https://www.instagram.com/p/${instaMatch[1]}/embed`;
+
+        // Vimeo
         const vimeoMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?vimeo\.com\/(\d+)/);
         if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+
         return null;
     }
 
@@ -141,10 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const sampleData = [
-        { name: "Bulla at Biella Jazz Club | Rabbi Shergill", link: "https://www.youtube.com/watch?v=z5X6fczz54Q", category: "Music 🎵", genre: "Sufi 👳", platform: "YouTube" },
-        { name: "Mohe rang do laal violin", link: "https://youtube.com/shorts/DRCXQCCCUJ0", category: "Music 🎵", genre: "Bollywood🎥", platform: "YouTube" },
-        { name: "Sisters Season 2", link: "https://www.youtube.com/watch?v=Pls0Uw_omDk", category: "TV Show 📺", genre: "Comedy 😁", platform: "YouTube" },
-        { name: "Instagram Post", link: "https://www.instagram.com/p/C_sample/", category: "Social 📱", genre: "Vlog 🙋‍♂️", platform: "Instagram" }
+        { name: "Rabbi Shergill - Bulla (YouTube)", link: "https://www.youtube.com/watch?v=z5X6fczz54Q", category: "Music 🎵", genre: "Sufi 👳", platform: "YouTube" },
+        { name: "Violin Reel (Instagram Embed)", link: "https://www.instagram.com/reel/DRCXQCCCUJ0/", category: "Music 🎵", genre: "Bollywood🎥", platform: "Instagram" },
+        { name: "Only Murders in the Building (Prime)", link: "https://app.primevideo.com/detail?gti=amzn1.dv.gti.191c9f37-5af2-4267-a08f-8974a7c465f7", category: "TV Show 📺", genre: "Detective 🕵️‍♀️", platform: "Amazon Prime", thumbnail: "https://m.media-amazon.com/images/M/MV5BMGRjYjM3MjYtM2ZlMi00YmNmLWE4MzItYzI1YTNkNDM0YWI3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
+        { name: "Chipotle Recipe (YouTube Shorts)", link: "https://youtube.com/shorts/6xBEbs83QQg", category: "Recipe 🍕", genre: "Food 🍔", platform: "YouTube" }
     ];
 
     function loadLinksFromSheet() {
