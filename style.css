@@ -199,9 +199,9 @@ select:focus {
 /* DEEP ZOOM for Instagram - ZERO CLUTTER */
 .link-card.vertical iframe[src*="instagram.com"] {
     width: 160%;
-    height: 270%; /* Increased to bury the bottom bar deeper */
+    height: 250%; /* Increased to bury the bottom bar deeper */
     position: absolute;
-    top: -160px; /* Shifted up more to hide the header perfectly */
+    top: -120px; /* Shifted up more to hide the header perfectly */
     left: -30%; 
     transform: none;
     border: none;
