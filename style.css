@@ -199,12 +199,23 @@ select:focus {
 /* DEEP ZOOM for Instagram - ZERO CLUTTER */
 .link-card.vertical iframe[src*="instagram.com"] {
     width: 160%;
-    height: 250%; /* Increased to bury the bottom bar deeper */
+    height: 250%; /* User's preferred height */
     position: absolute;
-    top: -120px; /* Shifted up more to hide the header perfectly */
+    top: -120px; /* User's preferred offset */
     left: -30%; 
     transform: none;
     border: none;
+}
+
+.click-interceptor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background: transparent;
+    cursor: pointer;
 }
 
 /* Smart fix for Shorts to ensure they fit */
