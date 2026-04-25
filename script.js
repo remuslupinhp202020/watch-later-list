@@ -135,11 +135,29 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGrid(filtered);
     }
 
+    function populateFilters(data) {
+        categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+        platformFilter.innerHTML = '<option value="all">All Platforms</option>';
+        const categories = [...new Set(data.map(item => item.category).filter(Boolean))].sort();
+        const platforms = [...new Set(data.map(item => item.platform).filter(Boolean))].sort();
+        categories.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat; opt.textContent = cat;
+            categoryFilter.appendChild(opt);
+        });
+        platforms.forEach(plat => {
+            const opt = document.createElement('option');
+            opt.value = plat; opt.textContent = plat;
+            platformFilter.appendChild(opt);
+        });
+    }
+
     function loadLinksFromSheet() {
         fetch(googleSheetURL)
             .then(res => res.ok ? res.text() : Promise.reject('Network error'))
             .then(text => {
                 allLinksData = parseCSV(text);
+                populateFilters(allLinksData);
                 renderGrid(allLinksData);
             })
             .catch(() => {
