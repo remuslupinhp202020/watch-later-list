@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const platformFilter = document.getElementById('platform-filter');
 
     let allLinksData = [];
+    let currentPlayingContainer = null;
 
     function parseCSV(text) {
         try {
@@ -44,11 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function getEmbedURL(url) {
         if (!url) return null;
         const ytMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
+        
         const instaMatch = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
-        if (instaMatch) return `https://www.instagram.com/p/${instaMatch[1]}/embed`;
+        if (instaMatch) return `https://www.instagram.com/p/${instaMatch[1]}/embed/`;
+        
         const vimeoMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?vimeo\.com\/(\d+)/);
-        if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+        if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`;
+        
         return null;
     }
 
@@ -66,9 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderGrid(data) {
         horizontalGrid.innerHTML = '';
         verticalGrid.innerHTML = '';
-        
-        let hCount = 0;
-        let vCount = 0;
+        let hCount = 0; let vCount = 0;
 
         data.forEach(item => {
             const isVertical = item.link.includes('shorts') || item.link.includes('reel') || item.link.includes('instagram.com');
@@ -81,20 +83,41 @@ document.addEventListener('DOMContentLoaded', () => {
             const branding = getPlatformBranding(item.link, item.platform);
             const ytThumb = getYouTubeThumbnail(item.link);
             const customThumb = item.thumbnail && item.thumbnail.startsWith('http') ? item.thumbnail : null;
-            
-            let mediaHTML = '';
-            if (customThumb) {
-                mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${customThumb}')"></div>`;
-            } else if (embedURL) {
-                mediaHTML = `<div class="media-container"><iframe src="${embedURL}" frameborder="0" allowfullscreen></iframe></div>`;
-            } else if (ytThumb) {
-                mediaHTML = `<div class="media-container thumbnail-view" style="background-image: url('${ytThumb}')"></div>`;
+            const posterImg = customThumb || ytThumb;
+
+            let mediaContentHTML = '';
+            if (posterImg) {
+                mediaContentHTML = `<div class="poster-image" style="background-image: url('${posterImg}')"></div>`;
             } else {
-                mediaHTML = `<div class="media-container link-preview" style="background: ${branding.color}"><div class="link-brand">${branding.icon}</div><div class="platform-label">${branding.name}</div></div>`;
+                mediaContentHTML = `<div class="link-preview" style="background: ${branding.color}"><div class="link-brand">${branding.icon}</div><div class="platform-label">${branding.name}</div></div>`;
+            }
+
+            const mediaContainer = document.createElement('div');
+            mediaContainer.className = 'media-container';
+            mediaContainer.innerHTML = `
+                ${mediaContentHTML}
+                ${embedURL ? '<div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8,5.14V19.14L19,12.14L8,5.14Z" fill="white"/></svg></div>' : ''}
+            `;
+
+            // Click to Play Logic
+            if (embedURL) {
+                mediaContainer.style.cursor = 'pointer';
+                mediaContainer.onclick = () => {
+                    if (currentPlayingContainer && currentPlayingContainer !== mediaContainer) {
+                        // Restore previous container to poster
+                        currentPlayingContainer.innerHTML = currentPlayingContainer.getAttribute('data-original-html');
+                    }
+                    
+                    if (!mediaContainer.getAttribute('data-original-html')) {
+                        mediaContainer.setAttribute('data-original-html', mediaContainer.innerHTML);
+                    }
+
+                    mediaContainer.innerHTML = `<iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    currentPlayingContainer = mediaContainer;
+                };
             }
 
             card.innerHTML = `
-                ${mediaHTML}
                 <div class="card-content">
                     <div class="card-tags">
                         <span class="tag category">${item.category}</span>
@@ -107,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
+            card.prepend(mediaContainer);
             targetGrid.appendChild(card);
             if (isVertical) vCount++; else hCount++;
         });
@@ -145,13 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGrid(filtered);
     }
 
-    const sampleData = [
-        { name: "Rabbi Shergill - Bulla (YouTube)", link: "https://www.youtube.com/watch?v=z5X6fczz54Q", category: "Music 🎵", genre: "Sufi 👳", platform: "YouTube" },
-        { name: "Violin Reel (Instagram Embed)", link: "https://www.instagram.com/reel/DRCXQCCCUJ0/", category: "Music 🎵", genre: "Bollywood🎥", platform: "Instagram" },
-        { name: "Only Murders in the Building (Prime)", link: "https://app.primevideo.com/detail?gti=amzn1.dv.gti.191c9f37-5af2-4267-a08f-8974a7c465f7", category: "TV Show 📺", genre: "Detective 🕵️‍♀️", platform: "Amazon Prime", thumbnail: "https://m.media-amazon.com/images/M/MV5BMGRjYjM3MjYtM2ZlMi00YmNmLWE4MzItYzI1YTNkNDM0YWI3XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg" },
-        { name: "Chipotle Recipe (YouTube Shorts)", link: "https://youtube.com/shorts/6xBEbs83QQg", category: "Recipe 🍕", genre: "Food 🍔", platform: "YouTube" }
-    ];
-
     function loadLinksFromSheet() {
         fetch(googleSheetURL)
             .then(res => res.ok ? res.text() : Promise.reject('Network error'))
@@ -161,9 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderGrid(allLinksData);
             })
             .catch(err => {
-                allLinksData = sampleData;
-                populateFilters(allLinksData);
-                renderGrid(allLinksData);
+                console.warn("Using sample data");
+                renderGrid([]);
             });
     }
 
