@@ -177,6 +177,11 @@ select:focus {
     overflow: hidden;
 }
 
+/* Vertical Card Aspect Ratio */
+.link-card.vertical .media-container {
+    aspect-ratio: 9/16;
+}
+
 .media-container iframe {
     width: 100%;
     height: 100%;
@@ -184,16 +189,12 @@ select:focus {
     display: block;
 }
 
-/* Smart Crop for Instagram and Vertical Videos */
-.link-card:has(iframe[src*="instagram.com"]),
-.link-card:has(iframe[src*="shorts"]) {
-    --crop-offset: -50px;
-}
-
-.link-card iframe[src*="instagram.com"] {
-    height: calc(100% + 120px); /* Expand height to hide footer */
-    margin-top: -60px; /* Shift up to hide header */
-    width: 100%;
+/* Specific adjustment for Instagram iframes in vertical cards */
+.link-card.vertical iframe[src*="instagram.com"] {
+    height: 110%; /* Slight zoom to hide UI */
+    width: 110%;
+    margin-left: -5%;
+    margin-top: -5%;
 }
 
 .thumbnail-view {
