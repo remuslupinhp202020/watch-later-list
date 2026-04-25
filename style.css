@@ -189,64 +189,21 @@ select:focus {
     display: block;
 }
 
-/* Specific adjustment for Instagram iframes in vertical cards - ULTRA CLEAN CROP */
+/* ZERO CLUTTER Instagram Crop */
 .link-card.vertical iframe[src*="instagram.com"] {
-    height: 165%; /* Aggressive height to push footer out of view */
-    width: 100%;
-    margin-top: -110px; /* Aggressive shift to hide header */
+    height: 190%; /* Pushes footer way down */
+    width: 120%; /* Pushes edges out */
+    margin-top: -165px; /* Hides header completely */
+    margin-left: -10%;
     position: absolute;
     top: 0;
 }
 
-.play-overlay {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 64px;
-    height: 64px;
-    background: rgba(99, 102, 241, 0.8);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(8px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    z-index: 10;
-    pointer-events: none; /* Let the click pass to media-container */
-}
-
-.play-overlay svg {
-    width: 32px;
-    height: 32px;
-    margin-left: 4px;
-}
-
-.media-container:hover .play-overlay {
-    background: var(--primary);
-    transform: translate(-50%, -50%) scale(1.15);
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-}
-
-.poster-image {
+.poster-image, .thumbnail-view {
     width: 100%;
     height: 100%;
     background-size: cover;
     background-position: center;
-    transition: transform 0.5s ease;
-}
-
-.media-container:hover .poster-image {
-    transform: scale(1.05);
-}
-
-.thumbnail-view {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100%;
-    height: 100%;
 }
 
 .link-preview {
