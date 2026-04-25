@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const platformFilter = document.getElementById('platform-filter');
 
     let allLinksData = [];
+    let lastActiveIframe = null; // Track only the currently playing video
 
     function parseCSV(text) {
         try {
@@ -37,13 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function getEmbedURL(url) {
         if (!url) return null;
         const ytMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
-        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}`;
+        // Added enablejsapi=1 so we can pause YouTube videos seamlessly
+        if (ytMatch) return `https://www.youtube.com/embed/${ytMatch[1]}?enablejsapi=1`;
         
         const instaMatch = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/(?:reel|p)\/([a-zA-Z0-9_-]+)/);
         if (instaMatch) return `https://www.instagram.com/p/${instaMatch[1]}/embed/`;
         
         const vimeoMatch = url.match(/(?:https?:\/\/)?(?:\w+\.)?vimeo\.com\/(\d+)/);
-        if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+        // Added api=1 for seamless Vimeo pausing
+        if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}?api=1`;
         
         return null;
     }
@@ -66,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (embedURL) {
                 mediaHTML = `
                     <div class="media-container">
-                        <div class="click-interceptor"></div>
                         <div class="iframe-wrapper">
                             <iframe src="${embedURL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
@@ -92,26 +94,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            // Smart Stop Logic with Interceptor
-            const interceptor = card.querySelector('.click-interceptor');
-            if (interceptor) {
-                interceptor.addEventListener('click', () => {
-                    const allIframes = document.querySelectorAll('iframe');
-                    allIframes.forEach(ifrm => {
-                        const src = ifrm.src;
-                        ifrm.src = '';
-                        ifrm.src = src;
-                    });
-                    
-                    // Show all interceptors, then hide this one to allow player interaction
-                    document.querySelectorAll('.click-interceptor').forEach(ci => ci.style.display = 'block');
-                    interceptor.style.display = 'none';
-                });
-            }
-
             targetGrid.appendChild(card);
         });
     }
+
+    // Seamlessly pause the PREVIOUS video when a NEW one is clicked
+    window.addEventListener('blur', () => {
+        setTimeout(() => {
+            const active = document.activeElement;
+            if (active && active.tagName === 'IFRAME') {
+                if (lastActiveIframe && lastActiveIframe !== active) {
+                    const src = lastActiveIframe.src || '';
+                    if (src.includes('youtube.com')) {
+                        // Pause YT cleanly without reloading
+                        lastActiveIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    } else if (src.includes('vimeo.com')) {
+                        // Pause Vimeo cleanly
+                        lastActiveIframe.contentWindow.postMessage('{"method":"pause"}', '*');
+                    } else if (src.includes('instagram.com')) {
+                        // Instagram has no pause API, so we only reload this ONE previous video
+                        const currentSrc = lastActiveIframe.src;
+                        lastActiveIframe.src = '';
+                        lastActiveIframe.src = currentSrc;
+                    }
+                }
+                lastActiveIframe = active; // Update the currently playing video
+            }
+        }, 100);
+    });
 
     function filterData() {
         const searchTerm = searchInput.value.toLowerCase();
